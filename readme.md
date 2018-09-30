@@ -6,40 +6,26 @@ A Clojure library to provide structure around shared in-memory state, incorporat
 live changes, and broadcasting change deltas to observers. State is maintained using 
 clojure agents and supports a configurable crash recovery strategy.
 
-
-___
-
-### Install
-
-``` 
-[com.vodori/reactors "0.1.0"]
-```
-
 ___
 
 ### Rationale
 
-Reactors is meant to produce leverage when implementing server-heavy collaborative processes 
-by serializing the independent sources of change and broadcasting zero or more messages to the
-subscribers based on differences between the old and new state.
+Reactors provide leverage when implementing server-heavy collaborative processes 
+by reining in the independent sources of change and then broadcasting zero or more 
+messages to the subscribers based on differences between the old and new state.
 
-While you can certainly create lots of similar things using clojure primitives, 
-reactors has a couple key ideas:
+While you can certainly create lots of similar things yourself, 
+reactors implements a couple of key ideas that we value:
 
-* A unified approach for "new subscriber who knows nothing about this yet" and "existing subscriber knows all but the latest"
-  * Going from `state(t0)` to `state(tn)` should follow the same mechanism as going from `state(tn-1)` to `state(tn)`.
-  * We implement this by calling the emitter with an empty map as the old state (`state(t0)`)
-* Recovery of errors that might have caused the "accumulated view of the current state" to no longer be valid. 
-  * We do this by rebooting the reactor (à la OTP) and having subscribers discard what they had known.
+* A unified way to communicate state to new subscribers and existing subscribers as things change.
+* Recovery of errors that might have tainted the accumulated view of the current state. 
 
 ___
 
 ### Stability
 
-We use reactors in a production capacity. Our application supports hundreds of reactors
-at a time, each one siphoning relevant events off of a change stream from our database and supporting 
-clusters of users collaborating on the same resource (via channels that feed to their websocket 
-connection).
+We use reactors in a production capacity. We think the abstractions are simple 
+but useful and so are unlikely to change.
 
 ___
 
@@ -68,11 +54,8 @@ do dangerous things. If anything fails it will be retried according to the recov
 
 #### Publishers
 
-core.async channels representing sources of change. Publishers can be added
-to and removed from a reactor at any time.
-
-
-Example:
+A map of opaque identifiers to core.async channels representing sources of change. 
+Publishers can be added to and removed from a reactor at any time.
 
 ```clojure
 (def publishers 
@@ -82,8 +65,8 @@ Example:
 
 #### Subscribers
 
-core.async channels representing observers of change. Subscribers can be added
-to and removed from a reactor at any time.
+A map of opaque identifiers to core.async channels representing observers of state. 
+Subscribers can be added to and removed from a reactor at any time. 
 
 ```clojure
 (def subscribers 
@@ -95,7 +78,9 @@ to and removed from a reactor at any time.
 
 A function for incorporating change into current state. It's okay if this
 function does things like making database calls to gather additional information 
-because it runs on the agent which can be restarted if it crashes.
+because it runs on the agent which can be restarted if it crashes. The first argument
+is the current state contained by the reactor and the second argument is a tuple of 
+the publisher identity and the event itself.
 
 ```clojure
 (defn reducer [state [publisher event]]
@@ -123,6 +108,13 @@ change in your application (it should detect them instead).
 
 ___
 
+### Install
+
+``` 
+[com.vodori/reactors "0.1.0"]
+```
+___
+
 
 ### Usage
 
@@ -139,18 +131,19 @@ ___
        :emitter emitter 
        :backoff recovery-policy
        :initializer initializer}
-      (reactors/create-reactor)))
+       
+      (reactors/create-reactor)
       
-(reactors/add-publishers reactor publishers)
-
-; you can do this any time throughout the life
-; of the reactor (as users come and go, etc)
-(reactors/add-subscribers reactor subscribers)
-
-; it's now listening to events from publishers
-; and broadcasting incorporated changes to any
-; subscribers
-(reactors/start! reactor)
+      ; you can also do this any time throughout the
+      ; life of the reactor (as users come and go)
+      (reactors/add-publishers publishers)
+      (reactors/add-subscribers subscribers)
+      
+      ; start listening to events from publishers
+      ; and broadcasting incorporated changes to any
+      ; subscribers
+      (reactors/start!)))
+      
 ```
 
 ___ 
