@@ -24,13 +24,14 @@ We use reactors in a production capacity. We think the abstractions are simple
 but useful and so are unlikely to change.
 
 
+___
+
+
 ### Core Abstractions:
 
 A reactor consists of some state _(initializer)_, sources of change _(publishers)_, 
 observers of state _(subscribers)_, a function for incorporating change _(reducer)_, 
 and a function for describing changes in state to observers _(emitter)_.
-
-___
 
 
 #### Initializer
@@ -100,6 +101,7 @@ change in your application (it should detect them instead).
       (not-empty removed) (conj {:event :removed :data (mapv old-state removed)})))
 ```
 
+
 ___
 
 ### Install
@@ -107,8 +109,6 @@ ___
 ``` 
 [com.vodori/reactors "0.1.0"]
 ```
-___
-
 
 ### Usage
 
