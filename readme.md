@@ -6,12 +6,10 @@ A Clojure library to provide structure around shared in-memory state, incorporat
 live changes, and broadcasting change deltas to observers. State is maintained using 
 clojure agents and supports a configurable crash recovery strategy.
 
-___
-
 ### Rationale
 
 Reactors provide leverage when implementing server-heavy collaborative processes 
-by reining in the independent sources of change and then broadcasting zero or more 
+by reigning in the independent sources of change and then broadcasting zero or more 
 messages to the subscribers based on differences between the old and new state.
 
 While you can certainly create lots of similar things yourself, 
@@ -20,14 +18,10 @@ reactors implements a couple of key ideas that we value:
 * A unified way to communicate state to new subscribers and existing subscribers as things change.
 * Recovery of errors that might have tainted the accumulated view of the current state. 
 
-___
-
 ### Stability
 
 We use reactors in a production capacity. We think the abstractions are simple 
 but useful and so are unlikely to change.
-
-___
 
 
 ### Core Abstractions:
