@@ -29,9 +29,11 @@ ___
 
 ### Core Abstractions:
 
-A reactor consists of some state _(initializer)_, sources of change _(publishers)_, 
-observers of state _(subscribers)_, a function for incorporating change _(reducer)_, 
-and a function for describing changes in state to observers _(emitter)_.
+A reactor consists of some source of initial state _(initializer)_, sources of 
+change _(publishers)_, observers of state _(subscribers)_, a function for 
+incorporating change _(reducer)_, a function for describing changes in state 
+to observers _(emitter)_, and functions that cleanup when a reactor implodes 
+_(destroyers)_.
 
 
 #### Initializer
@@ -101,6 +103,16 @@ change in your application (it should detect them instead).
       (not-empty removed) (conj {:event :removed :data (mapv old-state removed)})))
 ```
 
+#### Destructors
+
+Functions of no arguments that perform housekeeping after a reactor implodes. Reactors
+implode when they have exhausted the entire recovery strategy or when the reactor has 
+gone from having some subscribers to having no subscribers.
+
+```clojure
+(def destructors
+  {::pool (fn [] (swap! reactor-pool disj (reactors/current-reactor)))})
+```
 
 ___
 
@@ -119,7 +131,10 @@ ___
 (def recovery-policy
   (take 10 (iterate (partial * 2) 10)))
 
-; create the reactor
+; create the reactor. This is a simplified example
+; but in reality, it's not unusual to close over
+; some unique per-reactor state inside the various 
+; functions (reducer, emitter, initializer)
 (def reactor 
   (-> {:reducer reducer 
        :emitter emitter 
@@ -132,12 +147,18 @@ ___
       ; life of the reactor (as users come and go)
       (reactors/add-publishers publishers)
       (reactors/add-subscribers subscribers)
+      (reactors/add-destructors destructors)
       
       ; start listening to events from publishers
       ; and broadcasting incorporated changes to any
       ; subscribers
       (reactors/start!)))
-      
+
+
+; inside of your functions (reducer, emitter, initializer)
+; you can also access the 'current reactor'. Use the function
+; (reactors/current-reactor). It will return nil if not called
+; from within a reactor function.
 ```
 
 ___ 

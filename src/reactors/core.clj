@@ -53,20 +53,20 @@
   (when (started? o n)
     (doseq [[ident chan] publishers]
       (async/go-loop [msg (async/<! chan)]
-                     (when (some? msg)
-                       (try (send-off r update :state reducer [ident msg])
-                            (catch Exception e))
-                       (recur (async/<! chan)))))))
+        (when (some? msg)
+          (try (send-off r update :state reducer [ident msg])
+               (catch Exception e))
+          (recur (async/<! chan)))))))
 
 (defn publishers-on-change [k r o {:keys [reducer] :as n}]
   (when (running? o n)
     (run! async/close! (vals (get-removed :publishers o n)))
     (doseq [[ident chan] (get-added :publishers o n)]
       (async/go-loop [msg (async/<! chan)]
-                     (when (some? msg)
-                       (try (send-off r update :state reducer [ident msg])
-                            (catch Exception e))
-                       (recur (async/<! chan)))))))
+        (when (some? msg)
+          (try (send-off r update :state reducer [ident msg])
+               (catch Exception e))
+          (recur (async/<! chan)))))))
 
 (defn subscribers-on-start [k r o {:keys [emitter subscribers] :as n}]
   (when (and (started? o n) (not-empty subscribers))
