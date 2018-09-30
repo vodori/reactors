@@ -1,4 +1,4 @@
-(defproject reactors "0.1.1-SNAPSHOT"
+(defproject com.vodori/reactors "0.1.0-SNAPSHOT"
   :description
   "A clojure library for maintaining state, incorporating events
    from multiple sources and broadcasting an interpretation of the
