@@ -111,7 +111,7 @@ gone from having some subscribers to having no subscribers.
 
 ```clojure
 (def destructors
-  {::pool (fn [] (swap! reactor-pool disj (reactors/current-reactor)))})
+  {::pool (fn [] (swap! reactor-pool disj reactor))})
 ```
 
 ___
