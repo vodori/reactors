@@ -82,7 +82,7 @@ the publisher identity and the event itself.
 ```clojure
 (defn reducer [state [publisher event]]
   (case (:kind event)
-    :insert (assoc state [(:id event)] (:data event))
+    :insert (assoc state (:id event) (:data event))
     :delete (dissoc state (:id event))
     state))
 ```
