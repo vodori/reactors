@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/vodori/reactors.svg?branch=develop)](https://travis-ci.org/vodori/reactors) [![Maven metadata URL](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/com/vodori/reactors/maven-metadata.xml.svg)](https://mvnrepository.com/artifact/com.vodori/reactors)
+[![Build Status](https://travis-ci.com/vodori/reactors.svg?branch=develop)](https://travis-ci.com/vodori/reactors) [![Maven metadata URL](https://img.shields.io/maven-metadata/v/https/repo1.maven.org/maven2/com/vodori/reactors/maven-metadata.xml.svg)](https://mvnrepository.com/artifact/com.vodori/reactors)
 
 ### Reactors
 
