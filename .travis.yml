@@ -1,10 +1,7 @@
 language: clojure
-jdk:
-- oraclejdk8
-- oraclejdk9
 matrix:
   include:
-    - jdk: openjdk10
+    - jdk: openjdk12
       before_install:
         - rm "${JAVA_HOME}/lib/security/cacerts"
         - ln -s /etc/ssl/certs/java/cacerts "${JAVA_HOME}/lib/security/cacerts"
